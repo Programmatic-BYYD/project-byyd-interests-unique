@@ -131,9 +131,7 @@ cityInput.addEventListener("keydown", e => {
 });
 
 cityInput.addEventListener("blur", () => {
-  if (cityInput.value.trim()) {
-    addCityFromString(cityInput.value);
-  }
+  hideSuggestions();
 });
 
 cityInput.addEventListener("input", () => {
@@ -160,7 +158,15 @@ cityInput.addEventListener("input", () => {
   matches.forEach(name => {
     const li = document.createElement("li");
     li.textContent = name;
-    li.onclick = () => addCityFromString(name);
+    li.addEventListener("mousedown", e => {
+  e.preventDefault(); // ⬅️ блокирует blur
+
+  addToSelected(name);
+  renderSelectedCities();
+  hideSuggestions();
+  cityInput.value = "";
+});
+
     citySuggestions.appendChild(li);
   });
 
