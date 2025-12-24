@@ -36,14 +36,39 @@ function calculateBase() {
 
   const gender = document.getElementById("genderSelect").value;
 
-  let ageFrom = Number(document.getElementById("ageFrom").value);
-  let ageTo = Number(document.getElementById("ageTo").value);
+  const ageFromInput = document.getElementById("ageFrom");
+  const ageToInput = document.getElementById("ageTo");
 
-  if (isNaN(ageFrom)) ageFrom = 0;
-  if (isNaN(ageTo)) ageTo = 70;
-  if (ageFrom < 0 || ageTo > 70 || ageFrom > ageTo) {
-    alert("Некорректный возраст");
-    return;
+  let ageFromRaw = ageFromInput.value;
+  let ageToRaw = ageToInput.value;
+
+  // сброс ошибок
+  ageFromInput.classList.remove("error");
+  ageToInput.classList.remove("error");
+
+  let ageFrom, ageTo;
+
+  // CASE 1: оба пустые → дефолт 0–70
+  if (ageFromRaw === "" && ageToRaw === "") {
+    ageFrom = 0;
+    ageTo = 70;
+  } else {
+    ageFrom = Number(ageFromRaw);
+    ageTo = Number(ageToRaw);
+
+    const invalid =
+      isNaN(ageFrom) ||
+      isNaN(ageTo) ||
+      ageFrom < 0 ||
+      ageTo > 70 ||
+      ageFrom > ageTo;
+
+    if (invalid) {
+      ageFromInput.classList.add("error");
+      ageToInput.classList.add("error");
+      alert("Проверьте корректность возраста");
+      return;
+    }
   }
 
   const tableBody = document.getElementById("tableBody");
@@ -68,7 +93,9 @@ function calculateBase() {
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${regionName}</td>
+      <td>${region.name}</td>
+      <td>${region.region || "—"}</td>
+      <td>${region.district || "—"}</td>
       <td>${gender}</td>
       <td>${ageFrom}–${ageTo}</td>
       <td>${regionSum.toLocaleString("ru-RU")}</td>
@@ -79,6 +106,8 @@ function calculateBase() {
   const totalRow = document.createElement("tr");
   totalRow.innerHTML = `
     <td><b>Итого</b></td>
+    <td></td>
+    <td></td>
     <td></td>
     <td></td>
     <td><b>${totalSum.toLocaleString("ru-RU")}</b></td>
@@ -100,7 +129,8 @@ function calculateBase() {
     selectedRegions.length;
 
   document.getElementById("explanation").innerText =
-    "Базовый охват рассчитан по гео, полу и возрасту";
+    "Базовый охват рассчитан по гео, полу и возрасту. " +
+    "Если возраст не выбран, используется диапазон 0–70 лет.";
 
   // auto-open details
   const accordion = document.getElementById("detailsAccordion");
@@ -148,7 +178,6 @@ function calculateWithInterests() {
 
   if (!coefs.length) return;
 
-  // применяется только самый узкий интерес
   const finalCoef = Math.min(...coefs);
   const finalReach = Math.round(BASE * finalCoef);
 
@@ -166,8 +195,8 @@ function calculateWithInterests() {
 
   document.getElementById("explanation").innerText =
     "Охват скорректирован по интересам. " +
-    "Для расчета применяется самый узкий интерес из выбранных. " +
-    "Повторяющиеся или однотипные интересы не усиливают сужение, коэффициент применяется один раз.";
+    "Для расчёта применяется самый узкий интерес из выбранных. " +
+    "Повторяющиеся или однотипные интересы не усиливают сужение — коэффициент применяется один раз.";
 }
 
 // ==============================
