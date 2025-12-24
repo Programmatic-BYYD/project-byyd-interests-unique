@@ -648,4 +648,9 @@ tbody tr:last-child td {
   background: #f9fafb;
 }
 
+input.error {
+  border-color: #ff4d4f;
+  background: #fff1f0;
+}
+
 
