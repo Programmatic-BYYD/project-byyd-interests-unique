@@ -653,4 +653,109 @@ input.error {
   background: #fff1f0;
 }
 
+/* Layout Wrapper */
+.dashboard-wrapper {
+display: flex;
+  align-items: flex-start; /* Чтобы сайдбар не растягивался на всю высоту, если контента мало */
+  gap: 32px; /* Расстояние между сайдбаром и контейнером */
+  max-width: 1400px;
+  margin: 0 auto;
+}
 
+.sidebar {
+  width: 260px;
+  background: #1e293b;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  
+  /* Убираем sticky, чтобы sidebar тянулся вместе с родителем */
+  position: relative; 
+  
+  /* Растягиваем на всю доступную высоту родителя */
+  align-self: stretch; 
+  
+  /* ПРАВКА: Бордер радиус 8px */
+  border-radius: 8px; 
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-logo {
+  padding: 32px 24px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #38bdf8; /* Акцентный голубой */
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 24px 12px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  margin: 4px 12px; /* Отступы внутри сайдбара для эффекта плавающих кнопок */
+  color: #cbd5e1;
+  text-decoration: none;
+  border-radius: 8px; /* Скругление внутренних кнопок */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Плавная динамика */
+  font-weight: 500;
+}
+
+/* Эффект при наведении — динамическое подсвечивание */
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  transform: translateX(5px); /* Небольшой сдвиг вправо для интерактивности */
+}
+
+/* Активный пункт (как на вашем скриншоте) */
+.nav-item.active {
+  background: #0d6efd; 
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+.nav-icon {
+  margin-right: 12px;
+  font-size: 18px;
+}
+
+.sidebar-footer {
+  padding: 20px;
+  font-size: 12px;
+  color: #64748b;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Main Content Adjustments */
+.main-content {
+  flex: 1; /* Контейнер занимает все оставшееся место */
+  min-width: 0; /* Защита от вылетания таблиц за экран */
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 70px;
+  }
+  .sidebar-logo, .nav-item span:not(.nav-icon), .sidebar-footer {
+    display: none;
+  }
+  .main-content {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+    padding: 16px;
+  }
+  .nav-item {
+    justify-content: center;
+  }
+  .nav-icon {
+    margin-right: 0;
+  }
+}
