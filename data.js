@@ -36959,7 +36959,7 @@ const cityData = [
       }
     }
   },
-  ];
+];
   
 const millionCities = [
   "Москва",
