@@ -98,6 +98,21 @@ function renderSelectedCities() {
 
     selectedCitiesContainer.appendChild(chip);
   });
+
+  function checkGeoAlerts() {
+  const warningBox = document.getElementById("geoWarning");
+  if (!warningBox) return;
+
+  const triggerRegions = [
+    "Московская область", 
+    "Ленинградская область", 
+    "Республика Крым"
+  ];
+  
+  // Если выбран хоть один из регионов-триггеров, показываем плашку
+  const hasTrigger = selectedRegions.some(name => triggerRegions.includes(name));
+  warningBox.style.display = hasTrigger ? "block" : "none";
+}
 }
 
 // ==============================
