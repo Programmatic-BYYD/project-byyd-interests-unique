@@ -146,57 +146,69 @@ function calculateBase() {
 // INTERESTS CALCULATION
 // ==============================
 
+// Находим функцию calculateWithInterests в calc.js и заменяем её логику:
+
 function calculateWithInterests() {
   if (!BASE) {
     alert("Сначала рассчитайте базовый охват");
     return;
   }
 
-  const selectedInterests = window.getSelectedInterests
-    ? window.getSelectedInterests()
-    : [];
+  const selectedInterests = window.getSelectedInterests ? window.getSelectedInterests() : [];
+  const selectedRegions = window.getSelectedRegions ? window.getSelectedRegions() : [];
+  const gender = document.getElementById("genderSelect").value;
+  const ageFrom = Number(document.getElementById("ageFrom").value) || 0;
+  const ageTo = Number(document.getElementById("ageTo").value) || 70;
 
-  if (!selectedInterests.length) {
-    document.getElementById("finalReach").innerText =
-      BASE.toLocaleString("ru-RU");
-
-    document.getElementById("coef").innerText = "1.00";
-    document.getElementById("deltaReach").innerText = "0%";
-
-    document.getElementById("explanation").innerText =
-      "Интересы не выбраны — используется базовый охват";
-
-    return;
+  // 1. Определяем финальный коэффициент интересов
+  let finalCoef = 1.0;
+  if (selectedInterests.length > 0) {
+    const coefs = selectedInterests.map(id => {
+      const interest = interestsData.find(i => i.id === id);
+      return interest ? COEF[interest.status] : 1.0;
+    });
+    finalCoef = Math.min(...coefs);
   }
 
-  const coefs = selectedInterests
-    .map(id => {
-      const interest = interestsData.find(i => i.id === id);
-      return interest ? COEF[interest.status] : null;
-    })
-    .filter(Boolean);
+  // 2. Считаем охват заново, разделяя возрастные группы
+  let totalFinalReach = 0;
 
-  if (!coefs.length) return;
+  selectedRegions.forEach(regionName => {
+    const region = cityData.find(c => c.name === regionName);
+    if (!region) return;
 
-  const finalCoef = Math.min(...coefs);
-  const finalReach = Math.round(BASE * finalCoef);
+    const gendersToCalc = (gender === "М/Ж") ? ["М", "Ж"] : [gender];
 
-  const deltaPercent =
-    ((BASE - finalReach) / BASE * 100).toFixed(1);
+    gendersToCalc.forEach(g => {
+      const genderData = region.capacity[g];
+      if (!genderData) return;
 
-  document.getElementById("finalReach").innerText =
-    finalReach.toLocaleString("ru-RU");
+      for (let age = ageFrom; age <= ageTo; age++) {
+        const count = genderData[String(age)] || 0;
+        
+        // ГЛАВНАЯ ЛОГИКА: 
+        // Если возраст от 0 до 3 — не сужаем (коэф 1.0)
+        // Если возраст 4 и старше — применяем коэффициент интереса
+        if (age <= 3) {
+          totalFinalReach += count;
+        } else {
+          totalFinalReach += Math.round(count * finalCoef);
+        }
+      }
+    });
+  });
 
-  document.getElementById("coef").innerText =
-    finalCoef.toFixed(2);
+  // 3. Выводим результаты
+  const deltaPercent = ((BASE - totalFinalReach) / BASE * 100).toFixed(1);
 
-  document.getElementById("deltaReach").innerText =
-    `${deltaPercent}%`;
+  document.getElementById("finalReach").innerText = totalFinalReach.toLocaleString("ru-RU");
+  document.getElementById("coef").innerText = finalCoef.toFixed(2);
+  document.getElementById("deltaReach").innerText = `${deltaPercent}%`;
 
-  document.getElementById("explanation").innerText =
-    "Охват скорректирован по интересам. " +
-    "Для расчёта применяется самый узкий интерес из выбранных. " +
-    "Повторяющиеся или однотипные интересы не усиливают сужение — коэффициент применяется один раз.";
+  document.getElementById("explanation").innerText = 
+    `Применен коэффициент ${finalCoef.toFixed(2)}. ` +
+    `Для возраста 0–3 года охват остается базовым (100%), так как интересы IAB применяются к родителям. ` +
+    `Для аудитории 4+ лет применен фильтр интересов.`;
 }
 
 // ==============================
