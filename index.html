@@ -35,15 +35,30 @@
     </p>
 
     <!-- GEO -->
-    <div class="filter city-selector geo-full">
-      <label>Города и регионы</label>
-
-      <input type="text" id="cityInput" placeholder="Введите название региона или города, либо укажите через запятую"
-        autocomplete="off" />
-
-      <ul id="citySuggestions" class="city-selector__list"></ul>
-      <div id="selectedCities" class="city-selector__selected"></div>
+<div class="filter city-selector geo-full">
+  <label style="display: flex; align-items: center;">
+    Города и регионы 
+    <div class="info-tooltip">
+      <span class="info-icon">?</span>
+      <div class="tooltip-content">
+        <b>Города федерального значения:</b><br>
+        Москва, Санкт-Петербург и Севастополь — отдельные субъекты РФ. 
+        Они <b>не входят</b> в состав областей (Московской, Ленинградской) или Республики Крым. 
+        Чтобы охватить город и область, выберите их по отдельности.
+      </div>
     </div>
+  </label>
+
+  <input type="text" id="cityInput" placeholder="Введите название региона или города, либо укажите через запятую"
+    autocomplete="off" />
+
+  <div id="geoWarning" class="geo-warning-box" style="display: none;">
+    ⚠️ Обратите внимание: выбранная область не включает город федерального значения (Москву, Санкт-Петербург или Севастополь). Добавьте их отдельно для полного охвата.
+  </div>
+
+  <ul id="citySuggestions" class="city-selector__list"></ul>
+  <div id="selectedCities" class="city-selector__selected"></div>
+</div>
 
     <!-- SOC-DEM -->
     <div class="filters">
