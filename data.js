@@ -38278,6 +38278,7 @@ const interestsData = [
 { id: "1295", name: "Защитное снаряжение для работы", category:"Хозяйственные товары", status: "Narrow", },
 { id: "1296", name: "Адвокаты", category:"Юридические услуги", status: "Narrow", },
 { id: "1297", name: "Залоговые поручительства", category:"Юридические услуги", status: "Very Narrow", }
+  { id: "1298", name: "Гражданская активность", category:"Новости и политика", status: "Medium", },
 ];
 
 const COEF = {
